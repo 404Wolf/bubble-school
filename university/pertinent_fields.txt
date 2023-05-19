@@ -1,0 +1,13 @@
+school.name
+school.zip
+school.state
+school.city
+student.size
+student.grad_students
+student.demographics.men
+student.demographics.women
+student.demographics.first_generation
+student.demographics.avg_family_income
+student.demographics.median_hh_income
+student.retention_rate.overall.full_time
+student.retention_rate.four_year.full_time
