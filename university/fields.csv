@@ -1,0 +1,4 @@
+name,path,type
+name,school.name,str
+endowment,school.endowment.end,float
+cost,cost.attendance.academic_year,float
