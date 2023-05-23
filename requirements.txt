@@ -1,2 +1,5 @@
 openai>=0.27.6
-python-dotenv
+python-dotenv~=1.0.0
+pandas~=2.0.1
+requests~=2.30.0
+numpy~=1.24.3
