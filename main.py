@@ -1,5 +1,10 @@
+from university import Universities
+
+
 def main():
-    pass
+    universities = Universities.from_schools("test.txt", "university/dataset.csv")
+    universities.to_file("university/dataset.csv")
+    print(universities)
 
 
 if __name__ == "__main__":
