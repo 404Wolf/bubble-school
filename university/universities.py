@@ -27,7 +27,7 @@ class Universities:
         return cls(pd.read_csv(filepath, index_col=INDEX_COL))
 
     def to_file(self, filepath: str):
-        self.universities.to_csv(filepath, index_label=INDEX_COL)
+        self.universities.to_csv(filepath, index_label=INDEX_COL, index=False)
 
     @classmethod
     def from_schools(cls, filepath: str, cache: str | None = None):
@@ -131,4 +131,11 @@ class Universities:
                 else:
                     centroids.append(random.choice(tuple(clustered_df.index)))
 
-        return clustered_df, clustered_df.loc[centroids]
+            while len(centroids) < cluster_count:
+                centroids.append(random.choice(tuple(clustered_df.index)))
+
+        clustered_df["centroid"] = [
+            index in centroids for index in clustered_df.index
+        ]
+
+        return clustered_df

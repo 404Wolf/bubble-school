@@ -2,7 +2,7 @@ from university import Universities
 
 
 def main():
-    universities = Universities.from_schools("test.txt", "university/dataset.csv")
+    universities = Universities.from_schools("test.txt")
     universities.to_file("university/dataset.csv")
     print(universities)
 

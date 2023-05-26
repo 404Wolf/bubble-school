@@ -2,3 +2,5 @@ name,path,type
 name,school.name,str
 endowment,school.endowment.end,float
 cost,cost.attendance.academic_year,float
+facultySalary,school.faculty_salary,float
+graduates,student.grad_students,float
