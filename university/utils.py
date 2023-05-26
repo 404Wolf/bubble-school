@@ -19,7 +19,7 @@ with open(NAMES_FILEPATH) as names_file:
     atexit.register(lambda: json.dump(names, open(NAMES_FILEPATH, "w"), indent=3))
 
 
-def fetch_data(identifier: str) -> dict:
+def fetch_data(identifier: int) -> dict:
     """
     Fetch the data of a university from its identifier.
 
