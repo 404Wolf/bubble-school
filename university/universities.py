@@ -115,7 +115,7 @@ class Universities:
                 clusters[datapoint_index] = dists.argmin()
             clustered_df["cluster"] = clusters
 
-            centroids = []
+            centroids.clear()
             for cluster_index, cluster in clustered_df.groupby("cluster"):
                 cluster_data = cluster.values[:, 1:-1]
 
@@ -131,7 +131,4 @@ class Universities:
                 else:
                     centroids.append(random.choice(tuple(clustered_df.index)))
 
-            while len(centroids) < cluster_count:
-                centroids.append(random.choice(clustered_df.index))
-
-        return clustered_df
+        return clustered_df, clustered_df.loc[centroids]

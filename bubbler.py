@@ -5,18 +5,20 @@ import matplotlib.pyplot as plt
 def main():
     universities = Universities.from_file("university/dataset.csv")
 
-    clustered = universities.cluster(4, ("endowment", "cost"), resolution=300)
-    # while (uniques := clustered['cluster'].unique()[0]) != 3:
-    #     print(uniques)
-    #     clustered, centroids = universities.cluster(4, ("endowment", "cost"), resolution=2)
-    #
-    clustered.plot(
-        x="cost",
-        y="endowment",
-        kind="scatter",
+    clustered, centroids = universities.cluster(
+        3, ("endowment", "cost"), resolution=150
+    )
+
+    plt.scatter(
+        x=clustered["cost"],
+        y=clustered["endowment"],
         c=clustered["cluster"],
     )
-    # centroids.plot(x="cost", y="endowment", c="red", kind="scatter")
+    plt.scatter(
+        x=centroids["cost"],
+        y=centroids["endowment"],
+        c="red",
+    )
     plt.show()
 
 
