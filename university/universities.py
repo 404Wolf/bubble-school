@@ -121,19 +121,20 @@ class Universities:
                     dists[centroid_index] = self.dist(datapoint_coord, centroid_coord)
                 clustered_df.loc[datapoint_index, "cluster"] = dists.argmin()
 
-            centroids.clear()
-            for cluster_index, cluster_df in clustered_df.groupby("cluster"):
-                cluster_data = cluster_df.values[:, datapoints]
-                midpoint = sum(cluster_data) / len(cluster_df)
-                closest_datapoint_dist, closest_datapoint_id = 0, -1
-                for datapoint_index, datapoint in cluster_df.iterrows():
-                    datapoint = datapoint.iloc[datapoints]
-                    if self.dist(midpoint, datapoint) < closest_datapoint_dist:
-                        closest_datapoint_id = datapoint.index[0]
+            if i != resolution - 1:
+                centroids.clear()
+                for cluster_index, cluster_df in clustered_df.groupby("cluster"):
+                    cluster_data = cluster_df.values[:, datapoints]
+                    midpoint = sum(cluster_data) / len(cluster_df)
+                    closest_datapoint_dist, closest_datapoint_id = 0, -1
+                    for datapoint_index, datapoint in cluster_df.iterrows():
+                        datapoint = datapoint.iloc[datapoints]
+                        if self.dist(midpoint, datapoint) < closest_datapoint_dist:
+                            closest_datapoint_id = datapoint.index[0]
 
-                if closest_datapoint_id != -1:
-                    centroids.append(cluster_df.loc[closest_datapoint_id])
-                else:
-                    centroids.append(random.choice(tuple(clustered_df.index)))
+                    if closest_datapoint_id != -1:
+                        centroids.append(cluster_df.loc[closest_datapoint_id])
+                    else:
+                        centroids.append(random.choice(tuple(clustered_df.index)))
 
         return clustered_df, clustered_df.loc[centroids]

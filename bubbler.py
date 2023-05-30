@@ -6,7 +6,7 @@ def main():
     universities = Universities.from_file("university/dataset.csv")
 
     clustered, centroids = universities.cluster(
-        2, ("graduates", "endowment"), resolution=1
+        4, ("graduates", "endowment"), resolution=122
     )
     print(clustered["cluster"])
 
