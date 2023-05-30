@@ -109,16 +109,18 @@ class Universities:
             self.universities.columns.get_loc(datapoint) for datapoint in datapoints
         ]
         clustered_df = self.standardized().dropna()
-        centroids = random.sample(tuple(clustered_df.index), k=cluster_count)
+        initial_centroids_df = clustered_df.sample(cluster_count)
+        centroids = []
+        for centroid_index, centroid in initial_centroids_df.iterrows():
+            centroids.append(centroid.iloc[datapoints])
         dists = np.zeros(cluster_count)
         clustered_df["cluster"] = -1
 
         for i in range(resolution):
             for datapoint_index, datapoint in clustered_df.iterrows():
-                for centroid_index, centroid_id in enumerate(centroids):
-                    centroid_coord = clustered_df.loc[centroid_id].iloc[datapoints]
+                for centroid_index, centroid in enumerate(centroids):
                     datapoint_coord = datapoint.iloc[datapoints]
-                    dists[centroid_index] = self.dist(datapoint_coord, centroid_coord)
+                    dists[centroid_index] = self.dist(datapoint_coord, centroid)
                 clustered_df.loc[datapoint_index, "cluster"] = dists.argmin()
 
             if i != resolution - 1:
@@ -126,15 +128,6 @@ class Universities:
                 for cluster_index, cluster_df in clustered_df.groupby("cluster"):
                     cluster_data = cluster_df.values[:, datapoints]
                     midpoint = sum(cluster_data) / len(cluster_df)
-                    closest_datapoint_dist, closest_datapoint_id = 0, -1
-                    for datapoint_index, datapoint in cluster_df.iterrows():
-                        datapoint = datapoint.iloc[datapoints]
-                        if self.dist(midpoint, datapoint) < closest_datapoint_dist:
-                            closest_datapoint_id = datapoint.index[0]
+                    centroids.append(midpoint)
 
-                    if closest_datapoint_id != -1:
-                        centroids.append(cluster_df.loc[closest_datapoint_id])
-                    else:
-                        centroids.append(random.choice(tuple(clustered_df.index)))
-
-        return clustered_df, clustered_df.loc[centroids]
+        return clustered_df, np.array(centroids)
