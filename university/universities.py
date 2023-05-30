@@ -3,6 +3,7 @@ from contextlib import suppress
 from copy import copy
 
 import numpy as np
+import pandas
 import pandas as pd
 
 from university.utils import fetch_data, fetch_id, fields
@@ -27,7 +28,7 @@ class Universities:
         return cls(pd.read_csv(filepath, index_col=INDEX_COL))
 
     def to_file(self, filepath: str):
-        self.universities.to_csv(filepath, index_label=INDEX_COL, index=False)
+        self.universities.to_csv(filepath, index_label=INDEX_COL)
 
     @classmethod
     def from_schools(cls, filepath: str, cache: str | None = None):
@@ -91,6 +92,10 @@ class Universities:
                 output_df[column] = output_df[column] / max(output_df[column])
         return output_df
 
+    def dist(self, coord1: np.ndarray, coord2: np.ndarray):
+        """Obtain the manhattan distance between two coordinates."""
+        return sum(abs(coord1 - coord2))
+
     def cluster(self, cluster_count: int, datapoints: tuple, resolution: int = 3):
         """
         Cluster the universities based on certain datapoints.
@@ -100,42 +105,35 @@ class Universities:
             datapoints: A tuple of the names of the datapoints to consider.
             resolution: Number of times to iterate k-means.
         """
+        datapoints = [
+            self.universities.columns.get_loc(datapoint) for datapoint in datapoints
+        ]
         clustered_df = self.standardized().dropna()
         centroids = random.sample(tuple(clustered_df.index), k=cluster_count)
         dists = np.zeros(cluster_count)
+        clustered_df["cluster"] = -1
 
         for i in range(resolution):
-            clusters = np.zeros(len(clustered_df))
-
-            for datapoint_index, datapoint_id in enumerate(clustered_df.index):
-                datapoint_coord = clustered_df.loc[datapoint_id].values[1:]
+            for datapoint_index, datapoint in clustered_df.iterrows():
                 for centroid_index, centroid_id in enumerate(centroids):
-                    centroid_coord = clustered_df.loc[centroid_id].values[1:]
-                    dists[centroid_index] = sum(abs(datapoint_coord - centroid_coord))
-                clusters[datapoint_index] = dists.argmin()
-            clustered_df["cluster"] = clusters
+                    centroid_coord = clustered_df.loc[centroid_id].iloc[datapoints]
+                    datapoint_coord = datapoint.iloc[datapoints]
+                    dists[centroid_index] = self.dist(datapoint_coord, centroid_coord)
+                clustered_df.loc[datapoint_index, "cluster"] = dists.argmin()
 
             centroids.clear()
-            for cluster_index, cluster in clustered_df.groupby("cluster"):
-                cluster_data = cluster.values[:, 1:-1]
-
-                midpoint = sum(cluster_data) / len(cluster)
+            for cluster_index, cluster_df in clustered_df.groupby("cluster"):
+                cluster_data = cluster_df.values[:, datapoints]
+                midpoint = sum(cluster_data) / len(cluster_df)
                 closest_datapoint_dist, closest_datapoint_id = 0, -1
-                for datapoint_index, datapoint_id in enumerate(cluster.index):
-                    datapoint_coord = cluster.loc[datapoint_id].values[1:-1]
-                    if sum(abs(datapoint_coord - midpoint)) < closest_datapoint_dist:
-                        closest_datapoint_id = datapoint_id
+                for datapoint_index, datapoint in cluster_df.iterrows():
+                    datapoint = datapoint.iloc[datapoints]
+                    if self.dist(midpoint, datapoint) < closest_datapoint_dist:
+                        closest_datapoint_id = datapoint.index[0]
 
                 if closest_datapoint_id != -1:
-                    centroids.append(cluster.loc[closest_datapoint_id])
+                    centroids.append(cluster_df.loc[closest_datapoint_id])
                 else:
                     centroids.append(random.choice(tuple(clustered_df.index)))
 
-            while len(centroids) < cluster_count:
-                centroids.append(random.choice(tuple(clustered_df.index)))
-
-        clustered_df["centroid"] = [
-            index in centroids for index in clustered_df.index
-        ]
-
-        return clustered_df
+        return clustered_df, clustered_df.loc[centroids]

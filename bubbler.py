@@ -1,5 +1,3 @@
-import numpy as np
-
 from university import Universities
 import matplotlib.pyplot as plt
 
@@ -7,28 +5,21 @@ import matplotlib.pyplot as plt
 def main():
     universities = Universities.from_file("university/dataset.csv")
 
-    clustered = universities.cluster(
-        3, ("endowment", "graduates", "cost"), resolution=40
+    clustered, centroids = universities.cluster(
+        2, ("graduates", "endowment"), resolution=1
     )
+    print(clustered["cluster"])
 
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection="3d")
-    colors = clustered["cluster"].values
-    centroids = clustered["centroid"].values
-    for centroid_index, centroid in enumerate(clustered.index):
-        if centroids[centroid_index]:
-            colors[centroid_index] = -1
-
-    ax.scatter(
-        xs=clustered["endowment"],
-        ys=clustered["graduates"],
-        zs=clustered["cost"],
-        c=colors
+    plt.scatter(
+        x=clustered["graduates"],
+        y=clustered["endowment"],
+        c=clustered["cluster"],
     )
-    ax.set_xlabel("Endowment")
-    ax.set_ylabel("Graduates")
-    ax.set_zlabel("Cost")
-    ax.set_title("Clustered Universities")
+    plt.scatter(
+        x=centroids["graduates"],
+        y=centroids["endowment"],
+        c="red",
+    )
     plt.show()
 
 
