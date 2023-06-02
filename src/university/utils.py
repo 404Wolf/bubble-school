@@ -61,7 +61,7 @@ def fetch_data(identifier: int) -> dict:
                 pass
         logger.debug(f"Field {field['key']}'s value set to {output[field['key']]}")
 
-    logger.info(f"Obtained data for {output['name']}")
+    logger.info(f"Obtained data for {field['name']}")
     return output
 
 
@@ -99,6 +99,7 @@ def fetch_id(name: str) -> int:
         for match in aliases:
             if name == match:
                 names[name] = int(college["id"])
+                logger.info(f"Found ID {names[name]} for {name} w/o having to use GTP.")
                 return names[name]
 
         # Otherwise, add the name to the list of possible names.
@@ -126,8 +127,10 @@ def fetch_id(name: str) -> int:
         max_tokens=12,
         api_key=config.apiKeys["openAi"],
     )
+    logger.debug(f"Received college name to use from GPT-3.")
 
     names[name] = int(name_finder.choices[0]["message"]["content"].replace("ID=", ""))
 
+    logger.info(f"Found ID {names[name]} for {name}.")
     # Build the university instance from the id of the most relevant name.
     return names[name]

@@ -97,7 +97,12 @@ class Universities:
                 # Locate the proper data based on its path
                 data["id"][school_index] = school_id
                 for field in school_data.keys():
-                    data[field][school_index] = school_data[field]
+                    try:
+                        data[field][school_index] = school_data[field]
+                    except KeyError as e:
+                        logger.warning(f"Could not find field {field} for {school_id}")
+                        logger.debug(f"Available fields: {school_data.keys()}")
+                        raise e
 
             return cls(pd.DataFrame(data))
 
