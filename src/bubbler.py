@@ -1,5 +1,8 @@
-from university import Universities
 import matplotlib.pyplot as plt
+
+from university import Universities
+
+logging.basicConfig(level=logging.DEBUG)
 
 
 def two_dimensions_test():
@@ -55,5 +58,17 @@ def three_dimensions_test():
     plt.show()
 
 
+def omnidimention_test():
+    universities = Universities.from_file("university/dataset.csv")
+    with open("bubble_by.txt") as f:
+        bubble_by = tuple(f.read().split("\n"))
+
+    clustered, centroids = universities.cluster(5, bubble_by, resolution=3)
+
+    for cluster in clustered.groupby("cluster"):
+        print(cluster)
+        print("\n\n")
+
+
 if __name__ == "__main__":
-    three_dimensions_test()
+    omnidimention_test()

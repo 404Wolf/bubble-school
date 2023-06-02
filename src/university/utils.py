@@ -1,21 +1,24 @@
 import atexit
 import json
-
-import openai
-import pandas
+import logging
 
 import config
+import openai
+import pandas
 import requests
 
 COLLEGE_SCORECARD_API_PATH = "https://api.data.gov/ed/collegescorecard/v1"
 FIELDS_FILEPATH = "university/fields.csv"
 NAMES_FILEPATH = "university/names.json"
 
+logger = logging.getLogger(__name__)
+
 with open(FIELDS_FILEPATH) as paths_file:
     fields = pandas.read_csv(paths_file)
 
 with open(NAMES_FILEPATH) as names_file:
     names: dict[str, int] = json.load(names_file)
+    logger.debug(f"Loaded {len(names)} names from {NAMES_FILEPATH}")
     atexit.register(lambda: json.dump(names, open(NAMES_FILEPATH, "w"), indent=3))
 
 
@@ -36,24 +39,29 @@ def fetch_data(identifier: int) -> dict:
             "id": identifier,
         },
     ).json()["results"]
+    logger.debug(f"Received {len(resp)} results from the College Scorecard API.")
 
     if resp:
         resp = resp[0]["latest"]
     else:
-        raise ValueError(f"Could not find a university with the identifier {identifier}.")
+        raise ValueError(
+            f"Could not find a university with the identifier {identifier}."
+        )
 
     # Parse the data into a dictionary with fields that are standardized path names.
     output = {}
     for index, field in fields.iterrows():
-        output[field["name"]] = resp
+        output[field["key"]] = resp
         for key in field["path"].split("."):
             try:
-                output[field["name"]] = output[field["name"]][key]
+                output[field["key"]] = output[field["key"]][key]
             except KeyError:
-                output[field["name"]] = None
+                output[field["key"]] = None
             except TypeError:
                 pass
+        logger.debug(f"Field {field['key']}'s value set to {output[field['key']]}")
 
+    logger.info(f"Obtained data for {output['name']}")
     return output
 
 
@@ -108,9 +116,9 @@ def fetch_id(name: str) -> int:
             {
                 "role": "system",
                 "content": "Given a list of possible college aliases/names and a "
-                           "query, you respond with the ID of the most relevant college "
-                           "name. Your response should only be the ID of the school, and "
-                           "should have no prefix.",
+                "query, you respond with the ID of the most relevant college "
+                "name. Your response should only be the ID of the school, and "
+                "should have no prefix.",
             },
             {"role": "user", "content": f"QUERY='{name}'; {parsed_college_names}"},
         ),

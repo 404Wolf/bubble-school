@@ -1,11 +1,9 @@
-import random
+import logging
 from contextlib import suppress
 from copy import copy
 
 import numpy as np
-import pandas
 import pandas as pd
-
 from university.utils import fetch_data, fetch_id, fields
 
 INDEX_COL = "id"
@@ -15,6 +13,11 @@ DATATYPES = {
     "str": object,
     "bool": bool,
 }
+logger = logging.getLogger(__name__)
+
+def dist(coord1: np.ndarray, coord2: np.ndarray):
+    """Obtain the manhattan distance between two coordinates."""
+    return sum(abs(coord1 - coord2))
 
 
 class Universities:
@@ -22,13 +25,31 @@ class Universities:
 
     def __init__(self, universities: pd.DataFrame):
         self.universities = universities
+        logger.info(f"Loaded {len(self.universities)} universities.")
+
+    def __len__(self):
+        return len(self.universities)
 
     @classmethod
     def from_file(cls, filepath: str) -> "Universities":
-        return cls(pd.read_csv(filepath, index_col=INDEX_COL))
+        """
+        Load data for many schools from a file.
+
+        Args:
+            filepath: Filepath to load the schools txt list from. Each school should be on
+                its own line, with no trailing line in the file.
+
+        Returns:
+            A new Universities object.
+        """
+        universities = cls(pd.read_csv(filepath, index_col=INDEX_COL))
+        logger.info(f"Loaded {len(universities)} universities from {filepath}.")
+        return universities
 
     def to_file(self, filepath: str):
+        """Save the data for many schools to a file."""
         self.universities.to_csv(filepath, index_label=INDEX_COL)
+        logger.info(f"Saved {len(self.universities)} universities to {filepath}.")
 
     @classmethod
     def from_schools(cls, filepath: str, cache: str | None = None):
@@ -45,6 +66,7 @@ class Universities:
         with open(filepath) as schools_file:
             # Read the names of all the schools that we are to load
             schools = schools_file.readlines()
+            logger.debug(f"Loaded {len(schools)} schools from {filepath}.")
             # Fetch the id for each school
             school_ids = []
             for school_name in schools:
@@ -62,11 +84,15 @@ class Universities:
                 try:
                     # If the data already exists in the cache use it
                     school_data = cache.loc[school_id]
+                    logger.debug(f"Loaded data for {school_id} from cache.")
                 except KeyError:
                     # Otherwise look it up and if it is nowhere to be found then skip the
                     # school and move on
-                    with suppress(ValueError):
+                    try:
                         school_data = fetch_data(school_id)
+                        logger.debug(f"Loaded data for {school_id}.")
+                    except ValueError:
+                        logger.warning(f"Could not find data for {school_id}.")
 
                 # Locate the proper data based on its path
                 data["id"][school_index] = school_id
@@ -92,10 +118,6 @@ class Universities:
                 output_df[column] = output_df[column] / max(output_df[column])
         return output_df
 
-    def dist(self, coord1: np.ndarray, coord2: np.ndarray):
-        """Obtain the manhattan distance between two coordinates."""
-        return sum(abs(coord1 - coord2))
-
     def cluster(self, cluster_count: int, datapoints: tuple, resolution: int = 3):
         """
         Cluster the universities based on certain datapoints.
@@ -120,7 +142,7 @@ class Universities:
             for datapoint_index, datapoint in clustered_df.iterrows():
                 for centroid_index, centroid in enumerate(centroids):
                     datapoint_coord = datapoint.iloc[datapoints]
-                    dists[centroid_index] = self.dist(datapoint_coord, centroid)
+                    dists[centroid_index] = dist(datapoint_coord, centroid)
                 clustered_df.loc[datapoint_index, "cluster"] = dists.argmin()
 
             if i != resolution - 1:

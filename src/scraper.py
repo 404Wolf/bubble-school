@@ -1,4 +1,8 @@
+import logging
+
 from university import Universities
+
+logging.basicConfig(level=logging.DEBUG)
 
 
 def main():
