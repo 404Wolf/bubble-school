@@ -13,7 +13,6 @@ def two_dimensions_test():
     clustered, centroids = universities.cluster(
         4, ("overallCost", "endowment"), resolution=14
     )
-    print(clustered["cluster"])
 
     plt.scatter(
         x=clustered["overallCost"],
@@ -34,8 +33,8 @@ def three_dimensions_test():
     clustered, centroids = universities.cluster(
         3, ("medianIncome", "endowment", "facultySalary"), resolution=50
     )
-    for cluster in clustered.groupby("cluster"):
-        print(cluster)
+    for cluster_index, cluster in clustered.groupby("cluster"):
+        print(cluster["schoolName"])
         print("\n\n")
 
     fig = plt.figure()
@@ -68,8 +67,8 @@ def omnidimention_test():
 
     clustered, centroids = universities.cluster(4, bubble_by, resolution=8)
 
-    for cluster in clustered.groupby("cluster"):
-        print(cluster)
+    for cluster_index, cluster in clustered.groupby("cluster"):
+        print(cluster["schoolName"])
         print("\n\n")
 
 
