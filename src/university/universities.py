@@ -78,7 +78,7 @@ class Universities:
             data = {"id": np.zeros(len(school_ids), dtype=int)}
             for index, field in fields.iterrows():
                 datatype = DATATYPES[field["type"]]
-                data[field["name"]] = np.empty(len(school_ids), dtype=datatype)
+                data[field["key"]] = np.empty(len(school_ids), dtype=datatype)
 
             for school_index, school_id in enumerate(school_ids):
                 try:
