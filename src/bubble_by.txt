@@ -21,7 +21,6 @@ studentExpendature
 studentRevenue
 studentCount
 medianIncome
-schoolName
 housingCost
 tuitionCost
 overallPrice
