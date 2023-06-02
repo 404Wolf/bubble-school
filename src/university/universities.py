@@ -112,9 +112,9 @@ class Universities:
 
         Returns:
             A new and identical dataframe to ours where each datapoint is mapped between
-                0 and 1.
+                0 and 1. Null values are mapped to .5.
         """
-        output_df = copy(self.universities)
+        output_df = copy(self.universities).fillna(.5)
         # Iterate through the columns of the dataset
         for column in output_df.columns:
             # For all numerical (and thus divide-able) columns, divide all items in the
