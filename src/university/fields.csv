@@ -1,6 +1,34 @@
-name,path,type
-name,school.name,str
-endowment,school.endowment.end,float
-cost,cost.attendance.academic_year,float
-facultySalary,school.faculty_salary,float
-graduates,student.grad_students,float
+name,key,description,path,category,type
+Overall Cost,overallCost,total cost of attendance,cost.attendance.academic_year,body,float
+#/Graduate Students,graduateCount,number of graduate students in attendance,student.grad_students,body,float
+%/students Female,femaleProportion,preportion of students that are female,student.demographics.women,body,float
+Entry Age,entryAge,average age of entering student,student.demographics.age_entry,body,float
+%/Students Dependent,dependentProportion,preportion of students that are dependents,student.demographics.dependent,body,float
+%/Students Impovrished,povertyRate,percent of students who are in poverty,student.demographics.poverty_rate,body,float
+%/Students First Gen,firstGenerationProportion,preportion of students who are first generation,student.demographics.first_generation,body,float
+%/Students Asian,asianPreportion,preportion of students who are asian,student.demographics.race_ethnicity.asian,body,float
+%/Students Black,blackPreportion,preportion of students who are black,student.demographics.race_ethnicity.black,body,float
+%/Students White,whitePreportion,preportion of students who are white,student.demographics.race_ethnicity.white,body,float
+%/Students Hispanic,hispanicPreportion,preportion of students who are hispanic,student.demographics.race_ethnicity.hispanic,body,float
+%/Students Native American/Alaskan,nativePreportion,preportion of students who are Native American/Alaskan,student.demographics.race_ethnicity.aian,body,float
+%/Faculty Asian,asianPreportion,preportion of faculty who are asian,student.demographics.faculty.race_ethnicity.asian,faculty,float
+%/Faculty Black,blackPreportion,preportion of faculty who are black,student.demographics.faculty.race_ethnicity.black,faculty,float
+%/Faculty White,whitePreportion,preportion of faculty who are white,student.demographics.faculty.race_ethnicity.white,faculty,float
+%/Faculty Hispanic,hispanicPreportion,preportion of faculty who are hispanic,student.demographics.faculty.race_ethnicity.hispanic,faculty,float
+%/Faculty Native American/Alaskan,nativePreportion,preportion of faculty who are Native American/Alaskan,student.demographics.faculty.race_ethnicity.aian,faculty,float
+Student Expendature,studentExpendature,end of year school endowment,school.endowment.end,finance,float
+Faculty Salary,facultySalary,average faculty salary,school.faculty_salary,finance,float
+Student Expendature,studentExpendature,average expendature per student,school.instructional_expenditure_per_fte,finance,float
+Student Revenue,studentRevenue,average revenue per student,school.tuition_revenue_per_fte,finance,float
+Student Count,studentCount,number of students overall,student.size,finance,float
+Median Household Income,medianIncome,median household income,student.demographics.median_hh_income,finance,float
+School Name,schoolName,name of institution,school.name,info,str
+Housing Cost,housingCost,cost of on campus housing,cost.roomboard.oncampus,finance,float
+Tuition Cost,tuitionCost,cost of out of state tuition,cost.tuition.out_of_state,finance,float
+Average Price Paid,overallPrice,average price paid by students,cost.avg_net_price.overall,finance,float
+Pell Grant Receivers,pellGrantReceivers,preportion of students who receive a pell grant,cost.aid.pell_grant_rate,finance,float
+Federal Loan Receivers,federalLoanReceivers,preportion of students who receive federal loans,cost.aid.federal_loan_rate,finance,float
+Debt Amount,debtAmount,median debt amount of a people who pays off their debt,cost.aid.median_debt.completers.overall,finance,float
+Lenders,lenders,preportion of students with any loan,cost.aid.students_with_any_loan,finance,float
+6 Year Earnings,sixYearEarnings,median earnings 6 years after graudation,earnings.6_yrs_after_entry.median,finance,float
+10 Year Earnings,tenYearEarnings,median earnings 10 years after graudation,earnings.10_yrs_after_entry.median,finance,float
