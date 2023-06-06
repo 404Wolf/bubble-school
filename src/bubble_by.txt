@@ -1,3 +1,6 @@
+admissionRate
+mathSat
+englishSat
 overallCost
 graduateCount
 femaleProportion
@@ -15,7 +18,7 @@ blackPreportion
 whitePreportion
 hispanicPreportion
 nativePreportion
-studentExpendature
+endowment
 facultySalary
 studentExpendature
 studentRevenue
@@ -29,4 +32,3 @@ federalLoanReceivers
 debtAmount
 lenders
 sixYearEarnings
-tenYearEarnings
