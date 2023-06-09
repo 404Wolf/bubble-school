@@ -1,4 +1,7 @@
 name,key,description,path,category,type
+Acceptance Rate,admissionRate,preportion of applicants that were admitted,admissions.admission_rate.overall,admissions,float
+Math SAT,mathSat,median math section SAT score,admissions.sat_scores.midpoint.math,admissions,float
+English SAT,englishSat,median english section SAT score,admissions.sat_scores.midpoint.writing,admissions,float
 Overall Cost,overallCost,total cost of attendance,cost.attendance.academic_year,body,float
 #/Graduate Students,graduateCount,number of graduate students in attendance,student.grad_students,body,float
 %/students Female,femaleProportion,preportion of students that are female,student.demographics.women,body,float
@@ -30,5 +33,4 @@ Federal Loan Receivers,federalLoanReceivers,preportion of students who receive f
 Debt Amount,debtAmount,median debt amount of a people who pays off their debt,aid.median_debt.completers.overall,finance,float
 Lenders,lenders,preportion of students with any loan,aid.students_with_any_loan,finance,float
 6 Year Earnings,sixYearEarnings,median earnings 6 years after graudation,earnings.6_yrs_after_entry.median,finance,float
-10 Year Earnings,tenYearEarnings,median earnings 10 years after graudation,earnings.10_yrs_after_entry.median,finance,float
 School Name,schoolName,name of institution,school.name,info,str
